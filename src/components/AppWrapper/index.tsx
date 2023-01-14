@@ -9,7 +9,7 @@ import {
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Provider } from "react-redux";
 
-const App: FC = () => {
+const AppWrapper: FC = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -24,4 +24,4 @@ const App: FC = () => {
   );
 };
 
-export default App;
+export default AppWrapper;
