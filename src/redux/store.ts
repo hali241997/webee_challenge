@@ -1,5 +1,9 @@
-import { Action, configureStore } from "@reduxjs/toolkit";
-import createSensitiveStorage from "redux-persist-sensitive-storage";
+import {
+  AnyAction,
+  CombinedState,
+  combineReducers,
+  configureStore,
+} from "@reduxjs/toolkit";
 import {
   FLUSH,
   PAUSE,
@@ -10,6 +14,11 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist";
+import createSensitiveStorage from "redux-persist-sensitive-storage";
+import categoriesReducer from "./categories/slice";
+import { CategoriesState } from "./categories/types";
+import inventoriesReducer from "./inventories/slice";
+import { InventoriesState } from "./inventories/types";
 
 const storage = createSensitiveStorage({
   keychainService: "myKeychain",
@@ -22,8 +31,24 @@ const persistConfig = {
   storage,
 };
 
-const rootReducer = (state: unknown, action: Action<any>) => {
-  state = undefined;
+const combinedReducers = combineReducers({
+  categories: categoriesReducer,
+  inventories: inventoriesReducer,
+});
+
+const rootReducer = (
+  state:
+    | CombinedState<{
+        categories: CategoriesState;
+        inventories: InventoriesState;
+      }>
+    | undefined,
+  action: AnyAction,
+) => {
+  if (action.type === "clear") {
+    state = undefined;
+  }
+  return combinedReducers(state, action);
 };
 
 export const store = configureStore({
@@ -33,9 +58,10 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat([]),
+    }),
+  devTools: true,
 });
 
 export const persistor = persistStore(store);
 
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof rootReducer>;
