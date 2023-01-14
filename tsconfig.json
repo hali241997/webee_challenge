@@ -15,7 +15,9 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "baseUrl": "./src",
     "paths": {
+      "@navigation/*": ["navigation/*"],
       "@components/*": ["components/*"],
+      "@screens/*": ["screens/*"],
       "@appstate/*": ["redux/*"]
     }
   }
